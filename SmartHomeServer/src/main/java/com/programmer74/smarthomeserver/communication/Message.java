@@ -5,7 +5,8 @@ public class Message {
   public static int SET_RQ = 1;
   public static int GET_RP = 2;
   public static int SET_RP = 3;
-
+  public static int PING = 4;
+  public static int PONG = 5;
 
   public static int DIGITAL_WRITE = 0;
   public static int DIGITAL_READ = 1;

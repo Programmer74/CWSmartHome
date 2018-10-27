@@ -66,4 +66,23 @@ public class UDPCommunication {
 
     return ans;
   }
+
+  public synchronized Message ping(int nodeID) throws IOException {
+
+    Message msg = new Message(nodeID, Message.PING, 0);
+    msg.setPayload(new byte[0], 0);
+    final byte[] sendData = msg.toBytes();
+
+    final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,
+        serverAddress, serverPort);
+
+    System.out.println("PING: Sending message " + msg);
+    socket.send(sendPacket);
+    socket.receive(receivePacket);
+
+    Message ans = Message.fromBytes(receivePacket.getData());
+    System.out.println("PING: Received message " + ans);
+
+    return ans;
+  }
 }

@@ -56,4 +56,17 @@ public class RootController {
   ) {
     return setRegister(nodeID, Message.DIGITAL_WRITE, pin, val);
   }
+
+  @GetMapping("ping/{node}")
+  public String performPing(
+      @NotNull @PathVariable("node") Integer nodeID
+  ) {
+    try {
+      Message msg = udp.ping(nodeID);
+      return String.format("%d", msg.getBytePayload());
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      return "Error: " + ex.getMessage();
+    }
+  }
 }
