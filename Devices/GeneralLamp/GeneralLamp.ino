@@ -17,6 +17,8 @@ const uint16_t this_node = 01;        // Address of our node in Octal format
 #define MSG_TYPE_SET_RQ 1
 #define MSG_TYPE_GET_RP 2
 #define MSG_TYPE_SET_RP 3
+#define MSG_TYPE_PING 4
+#define MSG_TYPE_PONG 5
 
 #define DIGITAL_WRITE 0
 #define DIGITAL_READ 1
@@ -33,6 +35,7 @@ void setup(void)
 {
 
   Serial.begin(115200);
+  while (!Serial); 
   Serial.println("========================");
  
   SPI.begin();
@@ -77,11 +80,18 @@ void loop() {
         if (in_msg.reg_id == DIGITAL_WRITE) {
           Serial.print("Digital write "); Serial.print(in_msg.payload[0]); Serial.print(" to "); Serial.println(in_msg.payload[1]);
           digitalWrite(in_msg.payload[0], in_msg.payload[1]);
+        } else if (in_msg.reg_id == ANALOG_WRITE) {
+          Serial.print("Analog write "); Serial.print(in_msg.payload[0]); Serial.print(" to "); Serial.println(in_msg.payload[1]);
+          analogWrite(in_msg.payload[0], in_msg.payload[1]);
         } else {
           Serial.println("Unknown reg");
         }
-        
         break;
+      case MSG_TYPE_PING:
+        Serial.println("Ping rq");
+        out_msg.message_type = MSG_TYPE_PONG;
+        out_msg.reg_id = in_msg.reg_id;
+        out_msg.payload[0] = in_msg.payload[0];
     }
 
     network.write(out_header, &out_msg, sizeof(out_msg));
