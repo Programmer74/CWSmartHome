@@ -1,19 +1,20 @@
 package com.programmer74.smarthomeserver.controllers;
 
 import com.programmer74.smarthomeserver.communication.Message;
-import com.programmer74.smarthomeserver.communication.UDPCommunication;
+import com.programmer74.smarthomeserver.communication.UDPGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.Set;
 
 @RestController
 public class RootController {
 
   @Autowired
-  private UDPCommunication udp;
+  private UDPGateway udp;
 
   @GetMapping("get/{node}/{reg}")
   public String getRegister(
@@ -64,6 +65,17 @@ public class RootController {
     try {
       Message msg = udp.ping(nodeID);
       return String.format("%d", msg.getBytePayload());
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      return "Error: " + ex.getMessage();
+    }
+  }
+
+  @GetMapping("alive")
+  public String performAliveNodesLookup() {
+    try {
+      Set<Integer> nodes = udp.getAvailableNodesList();
+      return nodes.toString();
     } catch (IOException ex) {
       ex.printStackTrace();
       return "Error: " + ex.getMessage();

@@ -21,11 +21,14 @@ public class Message {
 
   private byte[] payload;
 
+  private long timestamp;
+
   public Message(final int nodeID, final int type, final int regID) {
     this.nodeID = nodeID;
     this.type = type;
     this.regID = regID;
     this.payload = new byte[8];
+    this.timestamp = System.currentTimeMillis();
   }
 
   public void setPayload(final byte payload) {
@@ -70,5 +73,13 @@ public class Message {
     }
     s += "]}";
     return s;
+  }
+
+  public int getNodeID() {
+    return nodeID;
+  }
+
+  public long getTimestamp() {
+    return timestamp;
   }
 }
