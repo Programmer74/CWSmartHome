@@ -11,7 +11,7 @@ public class SmarthomeserverConfig {
   @Bean
   public UDPCommunication udpCommunication() {
     try {
-      return new UDPCommunication(InetAddress.getByName("192.168.0.105"), 1337);
+      return new UDPCommunication(InetAddress.getByName("localhost"), 1337);
     } catch (Exception ex) {
       ex.printStackTrace();
       System.exit(-1);

@@ -19,3 +19,4 @@
 ### NRF TO UDP GATEWAY ###
 **/obj
 **/cppudp
+**/cppudpmock
