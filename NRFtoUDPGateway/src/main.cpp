@@ -9,10 +9,7 @@
 
 #define BUF_SIZE 32
 
-#define UDP_MSG_TYPE_GET_RQ 0
-#define UDP_MSG_TYPE_PUT_RQ 1
-#define UDP_MSG_TYPE_GET_RP 2
-#define UDP_MSG_TYPE_PUT_RP 3
+#define MAX_REWRITE_ATTEMPTS 5
 
 typedef struct {
 	uint8_t message_type;
@@ -37,11 +34,11 @@ int main() {
 
 	char buf[BUF_SIZE];
 	int rq_len, res;
+	int attempts;
 
 	while (true) {
 
 		network.update();
-		//std::cout << "lol" << std::endl;
     	while (network.available()) {  
     		RF24NetworkHeader in_header;
       		nrf_message_t in_msg;
@@ -91,9 +88,24 @@ int main() {
 			}
 			std::cout << std::endl;
 
-      		res = network.write(out_header, &out_msg, sizeof(out_msg));	
-      		if (res < 0) {
-      			std::cerr << "NRF send err " << res << std::endl;
+			res = 0;
+			attempts = 0;
+
+			while (res <= 0) {
+	      		res = network.write(out_header, &out_msg, sizeof(out_msg));
+	      		if (res <= 0) {
+	      			std::cout << " failed. " << std::endl;
+	      		} else {
+	      			std::cout << " ok." << std::endl;
+	      		}
+	      		attempts++;
+	      		if (attempts >= MAX_REWRITE_ATTEMPTS) {
+	      			res = 1;
+	      			std::cerr << "Failed to send after " 
+	      						<< attempts 
+	      						<< " attempts." 
+	      						<< std::endl;
+	      		}
       		}
 
 		}
