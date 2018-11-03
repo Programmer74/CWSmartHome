@@ -1,4 +1,4 @@
-package com.programmer74.smarthomeserver.communication;
+package com.programmer74.smarthomeserver.messaging;
 
 public class Message {
   public static int GET_RQ = 0;

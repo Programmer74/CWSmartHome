@@ -1,5 +1,7 @@
 package com.programmer74.smarthomeserver.communication;
 
+import com.programmer74.smarthomeserver.messaging.Message;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,6 +11,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.programmer74.smarthomeserver.util.Utils.delay;
 
 public class UDPGateway {
   private DatagramSocket socket;
@@ -70,11 +74,7 @@ public class UDPGateway {
       if (ans != null) {
         break;
       }
-      try {
-        Thread.sleep(10);
-      } catch (Exception ex) {
-        //nothing
-      }
+      delay(10);
     }
 
     if (ans == null) {
@@ -96,82 +96,5 @@ public class UDPGateway {
 
     clearMessage(msg.getNodeID());
     socket.send(sendPacket);
-  }
-
-  public synchronized Message get(int nodeID, int regID, byte[] payload) throws IOException {
-
-    Message msg = new Message(nodeID, Message.GET_RQ, regID);
-
-    System.out.println("GET: Sending message " + msg);
-
-    sendMessage(msg);
-
-    Message ans = retrieveMessageBlocking(nodeID);
-    System.out.println("GET: Received message " + ans);
-
-    return ans;
-  }
-
-  public synchronized Message set(int nodeID, int regID, byte[] payload) throws IOException {
-
-    Message msg = new Message(nodeID, Message.SET_RQ, regID);
-    msg.setPayload(payload, 0);
-    sendMessage(msg);
-
-    Message ans = retrieveMessageBlocking(nodeID);
-    System.out.println("SET: Received message " + ans);
-
-    return ans;
-  }
-
-  public synchronized Message ping(int nodeID) throws IOException {
-
-    Message msg = new Message(nodeID, Message.PING, 0);
-    msg.setPayload(new byte[0], 0);
-
-    sendMessage(msg);
-
-    Message ans = retrieveMessageBlocking(nodeID);
-
-    System.out.println("PING: Received message " + ans);
-
-    return ans;
-  }
-
-  private synchronized void pingWithoutReply(int nodeID) throws IOException {
-
-    Message msg = new Message(nodeID, Message.PING, 0);
-    msg.setPayload(new byte[0], 0);
-
-    System.out.println("PING: Sending message " + msg);
-
-    sendMessage(msg);
-  }
-
-  public synchronized Set<Integer> getAvailableNodesList() throws IOException {
-    final Set<Integer> availableNodes = new HashSet<>();
-
-    for (int i = 1; i < 10; i++) {
-      pingWithoutReply(i);
-    }
-
-    long timeout = System.currentTimeMillis() + 5000;
-    Message ans;
-    while (System.currentTimeMillis() < timeout) {
-      for (int i = 0; i < 10; i++) {
-        ans = responseMap.get(i);
-        if (ans != null) {
-          responseMap.remove(i);
-          availableNodes.add(i);
-        }
-        try {
-          Thread.sleep(10);
-        } catch (Exception ex) {
-          //nothing
-        }
-      }
-    }
-
-    return availableNodes;
   }
 }

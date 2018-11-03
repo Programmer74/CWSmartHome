@@ -1,7 +1,8 @@
 package com.programmer74.smarthomeserver.controllers;
 
-import com.programmer74.smarthomeserver.communication.Message;
+import com.programmer74.smarthomeserver.messaging.Message;
 import com.programmer74.smarthomeserver.communication.UDPGateway;
+import com.programmer74.smarthomeserver.messaging.MessagesGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +15,7 @@ import java.util.Set;
 public class RootController {
 
   @Autowired
-  private UDPGateway udp;
+  private MessagesGateway messagesGateway;
 
   @GetMapping("get/{node}/{reg}")
   public String getRegister(
@@ -22,7 +23,7 @@ public class RootController {
       @NotNull @PathVariable("reg") Integer reg
   ) {
     try {
-      Message msg = udp.get(nodeID, reg, new byte[0]);
+      Message msg = messagesGateway.get(nodeID, reg, new byte[0]);
       return String.format("%d", msg.getBytePayload());
     } catch (IOException ex) {
       ex.printStackTrace();
@@ -41,7 +42,7 @@ public class RootController {
       byte[] payload = new byte[8];
       payload[0] = val0.byteValue();
       payload[1] = val1.byteValue();
-      Message msg = udp.set(nodeID, reg, payload);
+      Message msg = messagesGateway.set(nodeID, reg, payload);
       return String.format("%d", msg.getBytePayload());
     } catch (IOException ex) {
       ex.printStackTrace();
@@ -63,7 +64,7 @@ public class RootController {
       @NotNull @PathVariable("node") Integer nodeID
   ) {
     try {
-      Message msg = udp.ping(nodeID);
+      Message msg = messagesGateway.ping(nodeID);
       return String.format("%d", msg.getBytePayload());
     } catch (IOException ex) {
       ex.printStackTrace();
@@ -74,7 +75,7 @@ public class RootController {
   @GetMapping("alive")
   public String performAliveNodesLookup() {
     try {
-      Set<Integer> nodes = udp.getAvailableNodesList();
+      Set<Integer> nodes = messagesGateway.getAvailableNodesList();
       return nodes.toString();
     } catch (IOException ex) {
       ex.printStackTrace();
