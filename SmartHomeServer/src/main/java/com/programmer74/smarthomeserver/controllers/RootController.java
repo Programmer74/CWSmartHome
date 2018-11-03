@@ -31,6 +31,20 @@ public class RootController {
     }
   }
 
+  @GetMapping("get/{node}/{reg}/float")
+  public String getRegisterFloat(
+      @NotNull @PathVariable("node") Integer nodeID,
+      @NotNull @PathVariable("reg") Integer reg
+  ) {
+    try {
+      Message msg = messagesGateway.get(nodeID, reg, new byte[0]);
+      return String.format("%f", msg.getFloatPayload());
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      return "Error: " + ex.getMessage();
+    }
+  }
+
   @GetMapping("set/{node}/{reg}/{val0}/{val1}")
   public String setRegister(
       @NotNull @PathVariable("node") Integer nodeID,
@@ -50,13 +64,22 @@ public class RootController {
     }
   }
 
+  @GetMapping("setRelay/{node}/{pin}/{val}")
+  public String setRelay(
+      @NotNull @PathVariable("node") Integer nodeID,
+      @NotNull @PathVariable("pin") Integer pin,
+      @NotNull @PathVariable("val") Integer val
+  ) {
+    return setRegister(nodeID, Message.DIGITAL_WRITE, pin, val);
+  }
+
   @GetMapping("setLed/{node}/{pin}/{val}")
   public String setLed(
       @NotNull @PathVariable("node") Integer nodeID,
       @NotNull @PathVariable("pin") Integer pin,
       @NotNull @PathVariable("val") Integer val
   ) {
-    return setRegister(nodeID, Message.DIGITAL_WRITE, pin, val);
+    return setRegister(nodeID, Message.ANALOG_WRITE, pin, val);
   }
 
   @GetMapping("ping/{node}")

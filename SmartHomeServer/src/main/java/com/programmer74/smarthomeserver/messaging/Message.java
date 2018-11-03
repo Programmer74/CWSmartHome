@@ -1,5 +1,7 @@
 package com.programmer74.smarthomeserver.messaging;
 
+import static com.programmer74.smarthomeserver.util.Utils.floatFromBytes;
+
 public class Message {
   public static int GET_RQ = 0;
   public static int SET_RQ = 1;
@@ -41,8 +43,16 @@ public class Message {
     }
   }
 
+  public byte[] getPayload() {
+    return payload;
+  }
+
   public byte getBytePayload() {
     return payload[0];
+  }
+
+  public float getFloatPayload() {
+    return floatFromBytes(payload);
   }
 
   public byte[] toBytes() {

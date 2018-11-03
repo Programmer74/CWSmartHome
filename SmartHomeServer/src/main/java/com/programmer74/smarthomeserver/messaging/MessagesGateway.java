@@ -45,10 +45,7 @@ public class MessagesGateway {
 
   public synchronized Message ping(int nodeID) throws IOException {
 
-    Message msg = new Message(nodeID, Message.PING, 0);
-    msg.setPayload(new byte[0], 0);
-
-    udpGateway.sendMessage(msg);
+    pingWithoutReply(nodeID);
 
     Message ans =  udpGateway.retrieveMessageBlocking(nodeID);
 
@@ -60,7 +57,11 @@ public class MessagesGateway {
   private synchronized void pingWithoutReply(int nodeID) throws IOException {
 
     Message msg = new Message(nodeID, Message.PING, 0);
-    msg.setPayload(new byte[0], 0);
+    byte[] payload = new byte[8];
+    for (int i = 0; i < 8; i++) {
+      payload[i] = (byte)(System.currentTimeMillis() / (i + 1));
+    }
+    msg.setPayload(payload, 0);
 
     System.out.println("PING: Sending message " + msg);
 
@@ -70,7 +71,9 @@ public class MessagesGateway {
   public synchronized Set<Integer> getAvailableNodesList() throws IOException {
     final Set<Integer> availableNodes = new HashSet<>();
 
-    for (int i = 1; i < 10; i++) {
+    int scanUpTo = 5;
+
+    for (int i = 1; i < scanUpTo; i++) {
       pingWithoutReply(i);
       delay(50);
     }
@@ -78,11 +81,13 @@ public class MessagesGateway {
     long timeout = System.currentTimeMillis() + 5000;
     Message ans;
     while (System.currentTimeMillis() < timeout) {
-      for (int i = 0; i < 10; i++) {
+      for (int i = 1; i < scanUpTo; i++) {
         ans = udpGateway.retrieveMessage(i);
         if (ans != null) {
           udpGateway.clearMessage(i);
           availableNodes.add(i);
+        } else if (!availableNodes.contains(i)){
+          //pingWithoutReply(i);
         }
         delay(10);
       }
