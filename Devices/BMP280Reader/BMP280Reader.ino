@@ -5,13 +5,13 @@
 
 /*************  USER Configuration *****************************/
                                           // Hardware configuration
-RF24 radio(9,8);                        // Set up nRF24L01 radio on SPI bus plus pins 7 & 8
+RF24 radio(9, 10);                        // Set up nRF24L01 radio on SPI bus plus pins 7 & 8
 
 /***************************************************************/
 
 RF24Network network(radio);          // Network uses that radio
 
-const uint16_t this_node = 01;        // Address of our node in Octal format
+const uint16_t this_node = 03;        // Address of our node in Octal format
 
 #define MSG_TYPE_GET_RQ 0
 #define MSG_TYPE_SET_RQ 1
@@ -20,18 +20,22 @@ const uint16_t this_node = 01;        // Address of our node in Octal format
 #define MSG_TYPE_PING 4
 #define MSG_TYPE_PONG 5
 
-#define DIGITAL_WRITE 0
-#define DIGITAL_READ 1
-#define ANALOG_WRITE 2
-#define ANALOG_READ 3
-
-#define MAX_REWRITE_ATTEMPTS 5
-
 typedef struct {
     uint8_t message_type;
     uint8_t reg_id;
     uint8_t payload[8];
 } nrf_message_t;
+
+
+void fuck() {
+  RF24NetworkHeader out_header(0);
+    nrf_message_t out_msg;
+    out_msg.message_type = MSG_TYPE_PONG;
+        out_msg.reg_id = 0;
+         network.write(out_header, &out_msg, sizeof(out_msg));
+         Serial.println("FUCK DONE");
+}
+
 
 void setup(void)
 {
@@ -42,10 +46,13 @@ void setup(void)
  
   SPI.begin();
   radio.begin();
+  radio.setPALevel(RF24_PA_MAX);
   printf_begin();
   radio.printDetails();
  
   network.begin(/*channel*/ 90, /*node address*/ this_node);
+  delay(2000);
+  fuck();
 }
 
 void loop() {
@@ -78,41 +85,15 @@ void loop() {
         out_msg.message_type = MSG_TYPE_SET_RP;
         out_msg.reg_id = in_msg.reg_id;
         out_msg.payload[0] = in_msg.payload[0];
-
-        if (in_msg.reg_id == DIGITAL_WRITE) {
-          Serial.print("Digital write "); Serial.print(in_msg.payload[0]); Serial.print(" to "); Serial.println(in_msg.payload[1]);
-          digitalWrite(in_msg.payload[0], in_msg.payload[1]);
-        } else if (in_msg.reg_id == ANALOG_WRITE) {
-          Serial.print("Analog write "); Serial.print(in_msg.payload[0]); Serial.print(" to "); Serial.println(in_msg.payload[1]);
-          analogWrite(in_msg.payload[0], in_msg.payload[1]);
-        } else {
-          Serial.println("Unknown reg");
-        }
         break;
       case MSG_TYPE_PING:
         Serial.println("Ping rq");
         out_msg.message_type = MSG_TYPE_PONG;
         out_msg.reg_id = in_msg.reg_id;
-        for (int i = 0; i < 8; i++) {
-          out_msg.payload[i] = in_msg.payload[i];
-        }
+        out_msg.payload[0] = in_msg.payload[0];
     }
 
-    bool ok = false;
-    int attempts = 0;
-
-    while (!ok) {
-      ok = network.write(out_header, &out_msg, sizeof(out_msg));
-       if (ok)
-        Serial.println("ok.");
-      else
-        Serial.println("failed.");
-      attempts++;
-      if (attempts > MAX_REWRITE_ATTEMPTS) {
-        ok = true;
-        Serial.println("Failed too many times.");
-      }
-    }
+    network.write(out_header, &out_msg, sizeof(out_msg));
   }
   
 }
