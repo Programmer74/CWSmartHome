@@ -17,7 +17,13 @@ public class SmarthomeserverConfig {
   @Bean
   public UDPGateway udpCommunication() {
     try {
-      return new UDPGateway(InetAddress.getByName(applicationArguments.getSourceArgs()[0]), 1337);
+      String gwIp;
+      if (applicationArguments.getSourceArgs().length != 0) {
+        gwIp = applicationArguments.getSourceArgs()[0];
+      } else {
+        gwIp = "192.168.0.101";
+      }
+      return new UDPGateway(InetAddress.getByName(gwIp), 1337);
     } catch (Exception ex) {
       ex.printStackTrace();
       System.exit(-1);
