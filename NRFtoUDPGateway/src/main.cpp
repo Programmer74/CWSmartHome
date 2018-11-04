@@ -22,15 +22,22 @@ RF24Network network(radio);
 
 const uint16_t this_node = 00;
 
-int main() {
+int main(int argc, char** argv) {
 	std::cout << "Hi there!" << std::endl;
 
 	radio.begin();
 	network.begin(/*channel*/ 90, /*node address*/ this_node);
 	radio.printDetails();
 
+	std::string srv_ip;
+	if (argc == 2) {
+		srv_ip = argv[1];
+	} else {
+		srv_ip = "192.168.0.100";
+	}
+
 	udp_client_server::udp_server srv("0.0.0.0", 1337);
-	udp_client_server::udp_client cli("192.168.0.100", 1338);
+	udp_client_server::udp_client cli(srv_ip, 1338);
 
 	char buf[BUF_SIZE];
 	int rq_len, res;
