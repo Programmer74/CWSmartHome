@@ -50,10 +50,27 @@ int main() {
 
 				if (msgType == MSG_TYPE_PING) {
 					buf[1] = (uint8_t)MSG_TYPE_PONG;
-					res = cli.send(buf, 11);
-					if (res < 0) {
-						std::cerr << "UDP send back " << (int)errno << std::endl;
+				}
+				if (msgType == MSG_TYPE_GET_RQ) {
+					buf[1] = (uint8_t)MSG_TYPE_GET_RP;
+					if (regID == 1) {
+						float val = 0.12345;
+						uint32_t valbytes = *((uint32_t*)&val);
+						buf[3] = (valbytes >> 24) & 0xff;
+						buf[4] = (valbytes >> 16) & 0xff;
+						buf[5] = (valbytes >> 8) & 0xff;
+						buf[6] = (valbytes >> 0) & 0xff;
+					} else {
+						buf[3] = 0xaa;
+						buf[4] = 0xbb;
 					}
+				}
+				if (msgType == MSG_TYPE_SET_RQ) {
+					buf[1] = (uint8_t)MSG_TYPE_SET_RP;
+				}
+				res = cli.send(buf, 11);
+				if (res < 0) {
+					std::cerr << "UDP send back " << (int)errno << std::endl;
 				}
 			}
 		}
