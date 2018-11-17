@@ -24,8 +24,12 @@ const uint16_t this_node = 01;        // Address of our node in Octal format
 #define DIGITAL_READ 1
 #define ANALOG_WRITE 2
 #define ANALOG_READ 3
+#define RELAY_ON 4
+#define RELAY_OFF 5
 
 #define MAX_REWRITE_ATTEMPTS 5
+
+uint8_t pin_states[16] = {0};
 
 typedef struct {
     uint8_t message_type;
@@ -44,6 +48,10 @@ void setup(void)
   radio.begin();
   printf_begin();
   radio.printDetails();
+
+  for (int i = 0; i < 16; i++) {
+    pin_states[i] = 128;
+  }
  
   network.begin(/*channel*/ 90, /*node address*/ this_node);
 }
@@ -71,7 +79,12 @@ void loop() {
         Serial.print("Get rq on reg "); Serial.print(in_msg.reg_id); Serial.println();
         out_msg.message_type = MSG_TYPE_GET_RP;
         out_msg.reg_id = in_msg.reg_id;
-        out_msg.payload[0] = in_msg.reg_id * 2;
+        if (pin_states[in_msg.reg_id] != 128) {
+          Serial.println("Requested relay pin");
+          out_msg.payload[0] = pin_states[in_msg.reg_id];
+        } else {
+          out_msg.payload[0] = in_msg.reg_id * 2;
+        }
         break;
       case MSG_TYPE_SET_RQ:
         Serial.print("Set rq on reg "); Serial.print(in_msg.reg_id); Serial.println();
@@ -85,6 +98,14 @@ void loop() {
         } else if (in_msg.reg_id == ANALOG_WRITE) {
           Serial.print("Analog write "); Serial.print(in_msg.payload[0]); Serial.print(" to "); Serial.println(in_msg.payload[1]);
           analogWrite(in_msg.payload[0], in_msg.payload[1]);
+        } else if (in_msg.reg_id == RELAY_ON) {
+          Serial.print("Relay on on "); Serial.println(in_msg.payload[0]);
+          digitalWrite(in_msg.payload[0], LOW);
+          pin_states[in_msg.payload[0]] = 1;
+        } else if (in_msg.reg_id == RELAY_OFF) {
+          Serial.print("Relay off on "); Serial.println(in_msg.payload[0]);
+          digitalWrite(in_msg.payload[0], HIGH);
+          pin_states[in_msg.payload[0]] = 0;
         } else {
           Serial.println("Unknown reg");
         }
