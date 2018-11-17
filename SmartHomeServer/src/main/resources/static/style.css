@@ -1,7 +1,67 @@
-.functionblock {
-    background-color: #aabbcc;
+body {
+    font-family: Arial, Helvetica, sans-serif
+}
+
+#cmdAliveNodesUpdate {
+    background-color: #515E90;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px;
+}
+#cmdAliveNodesUpdate:hover {
+    background-color: #07123A;
+}
+
+.alivesarea {
+    background-color: #303E73;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px;
+}
+.alivestitle {
+    color: white;
+}
+#divAliveNodes {
+    background-color: #7A85AD;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
 }
 
 .nodearea {
-    /* display: none; */
+    display: none;
+    background-color: #10621E;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 5px;
+    color: white;
+}
+.nodefunctions {
+    background-color: #2B823A;
+    border-radius: 25px;
+    padding: 15px;
+    margin: 5px;
+    color: white;
+}
+.nodefunction {
+    background-color: #51A35F;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px;
+
+}
+.nodefunction:hover {
+    background-color: #82C38D;
 }

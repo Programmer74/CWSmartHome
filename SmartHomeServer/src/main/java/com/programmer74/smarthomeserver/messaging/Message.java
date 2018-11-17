@@ -14,6 +14,8 @@ public class Message {
   public static int DIGITAL_READ = 1;
   public static int ANALOG_WRITE = 2;
   public static int ANALOG_READ = 3;
+  public static int RELAY_ON = 4;
+  public static int RELAY_OFF = 5;
 
   private int nodeID;
 

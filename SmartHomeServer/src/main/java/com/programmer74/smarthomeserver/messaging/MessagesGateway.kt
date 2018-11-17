@@ -82,7 +82,7 @@ class MessagesGateway(private val udpGateway: UDPGateway) {
         delay(50)
       }
 
-      val timeout = System.currentTimeMillis() + 5000
+      val timeout = System.currentTimeMillis() + 2000
       var ans: Message?
       while (System.currentTimeMillis() < timeout) {
         for (i in 1 until scanUpTo) {

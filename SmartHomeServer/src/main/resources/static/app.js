@@ -16,25 +16,14 @@ function getRq(url, callback, error) {
     xmlHttp.send(null);
 }
 
-function doApiRequestAndSetResultTo(request, setTextTo) {
-    document.getElementById(setTextTo).innerHTML = "Loading...";
-    getRq(apiPrefix + request,
-        function (s) {
-            document.getElementById(setTextTo).innerHTML = s;
-        },
-        function (err, s) {
-            document.getElementById(setTextTo).innerHTML = "Error " + err;
-        });
-}
-
 function getAliveNodes(objectId) {
-    document.getElementById("divAliveNodes").innerHTML = "loading";
+    document.getElementById(objectId).innerHTML = "loading";
     getRq(apiPrefix + "/alive",
         function (s) {
             var aliveNodes = JSON.parse(s);
             if (aliveNodes.status === "ok") {
-                document.getElementById("divAliveNodes").innerHTML = aliveNodes.status;
                 var len = aliveNodes.nodes.length;
+                document.getElementById(objectId).innerHTML = "ok " + len + " nodes";
                 for (var i = 0; i < 10; i++) {
                     var divId = "node" + i.toString() + "area";
                     var style = "none";
@@ -47,11 +36,102 @@ function getAliveNodes(objectId) {
                     console.log(i + " is " + style)
                 }
             } else {
-                document.getElementById("divAliveNodes").innerHTML = "Error: " + s;
+                document.getElementById(objectId).innerHTML = "Error: " + s;
             }
         },
         function (err, s) {
             document.getElementById(setTextTo).innerHTML = "Error " + err;
+        });
+}
+
+function getTempInside(initialText, objectId) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(apiPrefix + "/get/04/4/float",
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                document.getElementById(objectId).innerHTML = initialText + ": " + temp.value + "C";
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(setTextTo).innerHTML = initialText + " Error " + err;
+        });
+}
+function getTempOutside(initialText, objectId) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(apiPrefix + "/get/04/5/float",
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                document.getElementById(objectId).innerHTML = initialText + ": " + temp.value + "C";
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(setTextTo).innerHTML = initialText + " Error " + err;
+        });
+}
+function setRelay(initialText, objectId, statusObjectId, node, pin, value) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(apiPrefix + "/setRelay/" + node + "/" + pin + "/" + value,
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                document.getElementById(objectId).innerHTML = initialText;
+                getRelay("State: ", statusObjectId, node, pin);
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(objectId).innerHTML = initialText + " Error " + err;
+        });
+}
+function getRelay(initialText, objectId, node, pin) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(apiPrefix + "/get/" + node + "/" + pin + "/byte",
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                if (temp.value === 0) {
+                    document.getElementById(objectId).innerHTML = initialText + "Off";
+                    document.getElementById(objectId).style.background = "#5b5449";
+                } else {
+                    document.getElementById(objectId).innerHTML = initialText + "On";
+                    document.getElementById(objectId).style.background = "#f2cf9a";
+                }
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(objectId).innerHTML = initialText + " Error " + err;
+        });
+}
+function analogWrite(initialText, objectId, node, pin, value) {
+    if (document.getElementById(objectId) != null) {
+        document.getElementById(objectId).innerHTML = "loading";
+    }
+    getRq(apiPrefix + "/analogWrite/" + node + "/" + pin + "/" + value,
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                if (document.getElementById(objectId) != null) {
+                    document.getElementById(objectId).innerHTML = initialText;
+                }
+            } else {
+                if (document.getElementById(objectId) != null) {
+                    document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+                }
+            }
+        },
+        function (err, s) {
+            if (document.getElementById(objectId) != null) {
+                document.getElementById(objectId).innerHTML = initialText + " Error " + err;
+            }
         });
 }
 //node1:
@@ -63,3 +143,25 @@ function getAliveNodes(objectId) {
 //node4:
 //temperature: api/get/04/4/float
 //temperature2: api/get/04/5/float
+
+function updateRect(jscolor) {
+    // 'jscolor' instance can be used as a string
+    document.getElementById('rect').style.backgroundColor = '#' + jscolor;
+}
+function updateRGB(jscolor) {
+    // 'jscolor' instance can be used as a string
+    document.getElementById('rect').style.backgroundColor = '#' + jscolor;
+    var rgb = hexToRgb('#' + jscolor);
+    console.log("updated");
+    analogWrite(null, null, 1, 3, rgb.r);
+    analogWrite(null, null, 1, 5, rgb.g);
+    analogWrite(null, null, 1, 6, rgb.b);
+}
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}

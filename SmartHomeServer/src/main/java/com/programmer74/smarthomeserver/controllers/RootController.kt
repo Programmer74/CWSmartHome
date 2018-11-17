@@ -2,10 +2,11 @@ package com.programmer74.smarthomeserver.controllers
 
 
 import com.programmer74.smarthomeserver.AliveNodes
+import com.programmer74.smarthomeserver.FloatReply
+import com.programmer74.smarthomeserver.ByteReply
+import com.programmer74.smarthomeserver.SetRegReply
 import com.programmer74.smarthomeserver.messaging.Message
-import com.programmer74.smarthomeserver.communication.UDPGateway
 import com.programmer74.smarthomeserver.messaging.MessagesGateway
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -36,33 +37,48 @@ class RootController (private val messagesGateway: MessagesGateway){
   fun getRegisterFloat(
       @NotNull @PathVariable("node") nodeID: Int?,
       @NotNull @PathVariable("reg") reg: Int?
-  ): String {
+  ): FloatReply {
     try {
       val msg = messagesGateway.get(nodeID!!, reg!!, ByteArray(0))
-      return String.format("%f", msg.floatPayload)
+      return FloatReply("ok", msg.floatPayload)
     } catch (ex: IOException) {
       ex.printStackTrace()
-      return "Error: " + ex.message
+      return FloatReply("Error: " + ex.message, 0f)
+    }
+
+  }
+
+  @GetMapping("get/{node}/{reg}/byte")
+  fun getRegisterByte(
+      @NotNull @PathVariable("node") nodeID: Int?,
+      @NotNull @PathVariable("reg") reg: Int?
+  ): ByteReply {
+    try {
+      val msg = messagesGateway.get(nodeID!!, reg!!, ByteArray(0))
+      return ByteReply("ok", msg.bytePayload)
+    } catch (ex: IOException) {
+      ex.printStackTrace()
+      return ByteReply("Error: " + ex.message, 0)
     }
 
   }
 
   @GetMapping("set/{node}/{reg}/{val0}/{val1}")
-  fun setRegister(
+  fun setRegisterByte(
       @NotNull @PathVariable("node") nodeID: Int?,
       @NotNull @PathVariable("reg") reg: Int?,
       @NotNull @PathVariable("val0") val0: Int?,
       @NotNull @PathVariable("val1") val1: Int?
-  ): String {
+  ): SetRegReply {
     try {
       val payload = ByteArray(8)
       payload[0] = val0!!.toByte()
       payload[1] = val1!!.toByte()
       val msg = messagesGateway.set(nodeID!!, reg!!, payload)
-      return String.format("%d", msg.bytePayload)
+      return SetRegReply("ok", msg.bytePayload.toInt())
     } catch (ex: IOException) {
       ex.printStackTrace()
-      return "Error: " + ex.message
+      return SetRegReply("Error: " + ex.message, -1)
     }
 
   }
@@ -71,18 +87,31 @@ class RootController (private val messagesGateway: MessagesGateway){
   fun setRelay(
       @NotNull @PathVariable("node") nodeID: Int?,
       @NotNull @PathVariable("pin") pin: Int?,
-      @NotNull @PathVariable("val") `val`: Int?
-  ): String {
-    return setRegister(nodeID, Message.DIGITAL_WRITE, pin, `val`)
+      @NotNull @PathVariable("val") value: Int?
+  ): SetRegReply {
+    if (value != 0) {
+      return setRegisterByte(nodeID, Message.RELAY_ON, pin, value)
+    } else {
+      return setRegisterByte(nodeID, Message.RELAY_OFF, pin, value)
+    }
   }
 
-  @GetMapping("setLed/{node}/{pin}/{val}")
-  fun setLed(
+  @GetMapping("digitalWrite/{node}/{pin}/{val}")
+  fun digitalWrite(
       @NotNull @PathVariable("node") nodeID: Int?,
       @NotNull @PathVariable("pin") pin: Int?,
-      @NotNull @PathVariable("val") `val`: Int?
-  ): String {
-    return setRegister(nodeID, Message.ANALOG_WRITE, pin, `val`)
+      @NotNull @PathVariable("val") value: Int?
+  ): SetRegReply {
+    return setRegisterByte(nodeID, Message.DIGITAL_WRITE, pin, value)
+  }
+
+  @GetMapping("analogWrite/{node}/{pin}/{val}")
+  fun analogWrite(
+      @NotNull @PathVariable("node") nodeID: Int?,
+      @NotNull @PathVariable("pin") pin: Int?,
+      @NotNull @PathVariable("val") value: Int?
+  ): SetRegReply {
+    return setRegisterByte(nodeID, Message.ANALOG_WRITE, pin, value)
   }
 
   @GetMapping("ping/{node}")

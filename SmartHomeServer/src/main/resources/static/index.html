@@ -1,13 +1,17 @@
 <html>
 <head>
     <script src="app.js" language="JavaScript"></script>
+    <script src="jscolor.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CWSmartHome</title>
 </head>
 <body>
-    <h1>Hello World</h1>
-    <div class="functionblock" id="divAliveNodesBlock">
-        Alive nodes:
+    <h1>CWSmartHome GUI</h1>
+    <div class="alivesarea" id="divAliveNodesBlock">
+        <div class="alivestitle">
+        Alive nodes
+        </div>
         <div id="divAliveNodes">unknown</div>
         <button type="button" id="cmdAliveNodesUpdate" onclick='getAliveNodes("divAliveNodes")'>Update</button>
     </div>
@@ -16,17 +20,53 @@
         <div class="nodetitle">
             Node 1: General Lamp
         </div>
+        <div class="nodefunctions">
+            <!--<button type="button" class="nodefunction"-->
+                    <!--id="cmdGetTempInside" onclick='getTempInside("Inside", "cmdGetTempInside")'>-->
+                <!--PWM ON PIN 6</button>-->
+            <div class="relayarea">
+                <div class="relayname">Relay on 2</div>
+                <button type="button" class="nodefunction"
+                        id="cmdRelayState" onclick='getRelay("State: ", "cmdRelayState", 1, 2)'>
+                    State: ?</button>
+                <button type="button" class="nodefunction"
+                        id="cmdSetPin2High" onclick='setRelay("On", "cmdSetPin2High", "cmdRelayState", 1, 2, 1)'>
+                    On</button>
+                <button type="button" class="nodefunction"
+                        id="cmdSetPin2Low" onclick='setRelay("Off", "cmdSetPin2Low", "cmdRelayState", 1, 2, 0)'>
+                    Off</button>
+            </div>
+            <div class="rgbarea">
+                <div class="rgbareaname">RGB on 3,5,6</div>
+                <div class = "nodefunction" id="rect">
+                    <input class="jscolor {onFineChange:'updateRect(this)'}" onchange="updateRGB(this.jscolor)" value="000000">
+
+                    <!--<p id="rect1" style="border:1px solid gray; width:161px; height:100px;">-->
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="node2area" class ="nodearea">
         <div class="nodetitle">
             Node 2: PIR sensor
         </div>
+        <div class="nodefunctions">
+            CMD HERE
+        </div>
     </div>
 
     <div id="node4area" class ="nodearea">
         <div class="nodetitle">
             Node 4: Weather Station
+        </div>
+        <div class="nodefunctions">
+            <button type="button" class="nodefunction"
+                    id="cmdGetTempInside" onclick='getTempInside("Inside", "cmdGetTempInside")'>
+                Temp inside</button>
+            <button type="button" class="nodefunction"
+                    id="cmdGetTempOutside" onclick='getTempOutside("Outside", "cmdGetTempOutside")'>
+                Temp outside</button>
         </div>
     </div>
 
