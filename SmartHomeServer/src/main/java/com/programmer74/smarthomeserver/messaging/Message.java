@@ -9,6 +9,7 @@ public class Message {
   public static int SET_RP = 3;
   public static int PING = 4;
   public static int PONG = 5;
+  public static int ALARM = 6;
 
   public static int DIGITAL_WRITE = 0;
   public static int DIGITAL_READ = 1;
@@ -93,5 +94,9 @@ public class Message {
 
   public long getTimestamp() {
     return timestamp;
+  }
+
+  public int getType() {
+    return type;
   }
 }

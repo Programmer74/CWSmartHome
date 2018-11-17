@@ -17,10 +17,10 @@
     </div>
 
     <div id="node1area" class ="nodearea">
-        <div class="nodetitle">
+        <div class="nodetitle" onclick='showOrHideElement("node1functions")'>
             Node 1: General Lamp
         </div>
-        <div class="nodefunctions">
+        <div class="nodefunctions" id="node1functions">
             <!--<button type="button" class="nodefunction"-->
                     <!--id="cmdGetTempInside" onclick='getTempInside("Inside", "cmdGetTempInside")'>-->
                 <!--PWM ON PIN 6</button>-->
@@ -48,22 +48,37 @@
     </div>
 
     <div id="node2area" class ="nodearea">
-        <div class="nodetitle">
+        <div class="nodetitle" onclick='showOrHideElement("node2functions")'>
             Node 2: PIR sensor
         </div>
-        <div class="nodefunctions">
-            CMD HERE
+        <div class="nodefunctions" id="node2functions">
+            <button type="button" class="nodefunction"
+                    id="cmdAlarmState" onclick='getAlarmState("State: ", "cmdAlarmState")'>
+                State: ?</button>
+            <br>
+            <button type="button" class="nodefunction"
+                    id="cmdAlarmLastTriggered" onclick='getAlarmLastTriggered("Last Triggered: ", "cmdAlarmLastTriggered")'>
+                Last Triggered: ?</button>
+            <br>
+            <button type="button" class="nodefunction"
+                    id="cmdAlarmsTotal" onclick='getAlarmCount("Total alarms: ", "cmdAlarmsTotal")'>
+                Total alarms: ?</button>
+            <br>
+            <button type="button" class="nodefunction"
+                    id="cmdAlarmsAutoUpdate" onclick='cmdAlarmsAutoUpdateClicked()'>
+                AutoUpdate: Off</button>
         </div>
     </div>
 
     <div id="node4area" class ="nodearea">
-        <div class="nodetitle">
+        <div class="nodetitle" onclick='showOrHideElement("node4functions")'>
             Node 4: Weather Station
         </div>
-        <div class="nodefunctions">
+        <div class="nodefunctions" id="node4functions">
             <button type="button" class="nodefunction"
                     id="cmdGetTempInside" onclick='getTempInside("Inside", "cmdGetTempInside")'>
                 Temp inside</button>
+            <br>
             <button type="button" class="nodefunction"
                     id="cmdGetTempOutside" onclick='getTempOutside("Outside", "cmdGetTempOutside")'>
                 Temp outside</button>

@@ -1,4 +1,5 @@
 const apiPrefix = "/api";
+const alarmApiPrefix = "/api/alarm";
 
 function getRq(url, callback, error) {
     console.log("Requesting url " + url);
@@ -74,6 +75,7 @@ function getTempOutside(initialText, objectId) {
             document.getElementById(setTextTo).innerHTML = initialText + " Error " + err;
         });
 }
+
 function setRelay(initialText, objectId, statusObjectId, node, pin, value) {
     document.getElementById(objectId).innerHTML = "loading";
     getRq(apiPrefix + "/setRelay/" + node + "/" + pin + "/" + value,
@@ -111,6 +113,64 @@ function getRelay(initialText, objectId, node, pin) {
             document.getElementById(objectId).innerHTML = initialText + " Error " + err;
         });
 }
+
+function getAlarmState(initialText, objectId) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(alarmApiPrefix + "/current",
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                if (temp.value === 0) {
+                    document.getElementById(objectId).innerHTML = initialText + "Off";
+                    document.getElementById(objectId).style.background = "#3a903a";
+                } else {
+                    document.getElementById(objectId).innerHTML = initialText + "On";
+                    document.getElementById(objectId).style.background = "#f81200";
+                }
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(objectId).innerHTML = initialText + " Error " + err;
+        });
+}
+function getAlarmLastTriggered(initialText, objectId) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(alarmApiPrefix + "/lastAlarm",
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                if (temp.value != 0) {
+                    var adate = new Date(temp.value);
+                    document.getElementById(objectId).innerHTML = initialText + adate.toString()
+                } else {
+                    document.getElementById(objectId).innerHTML = initialText + "Never";
+                }
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(objectId).innerHTML = initialText + " Error " + err;
+        });
+}
+function getAlarmCount(initialText, objectId) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(alarmApiPrefix + "/totalAlarms",
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                document.getElementById(objectId).innerHTML = initialText + temp.value;
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(objectId).innerHTML = initialText + " Error " + err;
+        });
+}
+
 function analogWrite(initialText, objectId, node, pin, value) {
     if (document.getElementById(objectId) != null) {
         document.getElementById(objectId).innerHTML = "loading";
@@ -134,6 +194,7 @@ function analogWrite(initialText, objectId, node, pin, value) {
             }
         });
 }
+
 //node1:
 //leds: api/set[Relay|LED]/01/[2|3|4]/[0..255]
 
@@ -164,4 +225,32 @@ function hexToRgb(hex) {
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16)
     } : null;
+}
+
+var alarmsAutoUpdate = false;
+var timerId = 0;
+
+function cmdAlarmsAutoUpdateClicked() {
+    if (alarmsAutoUpdate === false) {
+        alarmsAutoUpdate = true;
+        document.getElementById("cmdAlarmsAutoUpdate").innerHTML = "AutoUpdate: On";
+        timerId = window.setInterval(function(){
+            document.getElementById("cmdAlarmState").click();
+            document.getElementById("cmdAlarmLastTriggered").click();
+            document.getElementById("cmdAlarmsTotal").click();
+        }, 1000);
+    } else {
+        window.clearInterval(timerId);
+        alarmsAutoUpdate = false;
+        document.getElementById("cmdAlarmsAutoUpdate").innerHTML = "AutoUpdate: Off";
+    }
+}
+function showOrHideElement(elementId) {
+    if (document.getElementById(elementId) != null) {
+        if (document.getElementById(elementId).style.display != "none") {
+            document.getElementById(elementId).style.display = "none";
+        } else {
+            document.getElementById(elementId).style.display = "block";
+        }
+    }
 }

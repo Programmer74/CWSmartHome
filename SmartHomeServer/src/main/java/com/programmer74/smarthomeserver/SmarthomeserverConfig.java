@@ -1,6 +1,7 @@
 package com.programmer74.smarthomeserver;
 
 import com.programmer74.smarthomeserver.communication.UDPGateway;
+import com.programmer74.smarthomeserver.watchers.AlarmWatcher;
 import com.programmer74.smarthomeserver.messaging.MessagesGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -41,6 +42,11 @@ public class SmarthomeserverConfig {
   @Bean
   public MessagesGateway messageGateway(UDPGateway udpGateway) {
     return new MessagesGateway(udpGateway);
+  }
+
+  @Bean
+  public AlarmWatcher alarmWatcher(UDPGateway udpGateway) {
+    return new AlarmWatcher(udpGateway, 2);
   }
 
   @Bean
