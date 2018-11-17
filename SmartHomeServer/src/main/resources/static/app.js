@@ -16,7 +16,7 @@ function getRq(url, callback, error) {
     xmlHttp.send(null);
 }
 
-function doApiRequest(request, setTextTo) {
+function doApiRequestAndSetResultTo(request, setTextTo) {
     document.getElementById(setTextTo).innerHTML = "Loading...";
     getRq(apiPrefix + request,
         function (s) {
@@ -28,5 +28,38 @@ function doApiRequest(request, setTextTo) {
 }
 
 function getAliveNodes(objectId) {
-    doApiRequest("/alive", objectId)
+    document.getElementById("divAliveNodes").innerHTML = "loading";
+    getRq(apiPrefix + "/alive",
+        function (s) {
+            var aliveNodes = JSON.parse(s);
+            if (aliveNodes.status === "ok") {
+                document.getElementById("divAliveNodes").innerHTML = aliveNodes.status;
+                var len = aliveNodes.nodes.length;
+                for (var i = 0; i < 10; i++) {
+                    var divId = "node" + i.toString() + "area";
+                    var style = "none";
+                    if (aliveNodes.nodes.includes(i)) {
+                        style = "block";
+                    }
+                    if (document.getElementById(divId) != null) {
+                        document.getElementById(divId).style.display = style;
+                    }
+                    console.log(i + " is " + style)
+                }
+            } else {
+                document.getElementById("divAliveNodes").innerHTML = "Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(setTextTo).innerHTML = "Error " + err;
+        });
 }
+//node1:
+//leds: api/set[Relay|LED]/01/[2|3|4]/[0..255]
+
+//node2:
+//pir sensor: api/get/2/1
+
+//node4:
+//temperature: api/get/04/4/float
+//temperature2: api/get/04/5/float

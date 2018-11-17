@@ -1,14 +1,34 @@
 <html>
 <head>
     <script src="app.js" language="JavaScript"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
     <title>CWSmartHome</title>
 </head>
 <body>
     <h1>Hello World</h1>
-    <div id="divAliveNodesBlock">
+    <div class="functionblock" id="divAliveNodesBlock">
         Alive nodes:
         <div id="divAliveNodes">unknown</div>
-        <button type="button"id="cmdAliveNodesUpdate" onclick='getAliveNodes("divAliveNodes")'>Update</button>
+        <button type="button" id="cmdAliveNodesUpdate" onclick='getAliveNodes("divAliveNodes")'>Update</button>
     </div>
+
+    <div id="node1area" class ="nodearea">
+        <div class="nodetitle">
+            Node 1: General Lamp
+        </div>
+    </div>
+
+    <div id="node2area" class ="nodearea">
+        <div class="nodetitle">
+            Node 2: PIR sensor
+        </div>
+    </div>
+
+    <div id="node4area" class ="nodearea">
+        <div class="nodetitle">
+            Node 4: Weather Station
+        </div>
+    </div>
+
 </body>
 </html>
