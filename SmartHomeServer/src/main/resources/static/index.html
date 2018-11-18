@@ -24,18 +24,6 @@
             <!--<button type="button" class="nodefunction"-->
                     <!--id="cmdGetTempInside" onclick='getTempInside("Inside", "cmdGetTempInside")'>-->
                 <!--PWM ON PIN 6</button>-->
-            <div class="relayarea">
-                <div class="relayname">Relay on 2</div>
-                <button type="button" class="nodefunction"
-                        id="cmdRelayState" onclick='getRelay("State: ", "cmdRelayState", 1, 2)'>
-                    State: ?</button>
-                <button type="button" class="nodefunction"
-                        id="cmdSetPin2High" onclick='setRelay("On", "cmdSetPin2High", "cmdRelayState", 1, 2, 1)'>
-                    On</button>
-                <button type="button" class="nodefunction"
-                        id="cmdSetPin2Low" onclick='setRelay("Off", "cmdSetPin2Low", "cmdRelayState", 1, 2, 0)'>
-                    Off</button>
-            </div>
             <div class="rgbarea">
                 <div class="rgbareaname">RGB on 3,5,6</div>
                 <div class = "nodefunction" id="rect">
@@ -67,6 +55,49 @@
             <button type="button" class="nodefunction"
                     id="cmdAlarmsAutoUpdate" onclick='cmdAlarmsAutoUpdateClicked()'>
                 AutoUpdate: Off</button>
+        </div>
+    </div>
+
+
+    <div id="node3area" class ="nodearea">
+        <div class="nodetitle" onclick='showOrHideElement("node3functions")'>
+            Node 3: Relay Station
+        </div>
+        <div class="nodefunctions" id="node3functions">
+            <div class="relayarea">
+                <div class="relayname">Relay on 2</div>
+                <button type="button" class="nodefunction"
+                        id="cmdRelay2State" onclick='getRelay("State: ", "cmdRelay2State", 3, 2)'>
+                    State: ?</button>
+                <button type="button" class="nodefunction"
+                        id="cmdSetPin2High" onclick='setRelay("On", "cmdSetPin2High", "cmdRelay2State", 3, 2, 1)'>
+                    On</button>
+                <button type="button" class="nodefunction"
+                        id="cmdSetPin2Low" onclick='setRelay("Off", "cmdSetPin2Low", "cmdRelay2State", 3, 2, 0)'>
+                    Off</button>
+                <div class="relayname">Relay on 3</div>
+                <button type="button" class="nodefunction"
+                        id="cmdRelay3State" onclick='getRelay("State: ", "cmdRelay3State", 3, 3)'>
+                    State: ?</button>
+                <button type="button" class="nodefunction"
+                        id="cmdSetPin3High" onclick='setRelay("On", "cmdSetPin3High", "cmdRelay3State", 3, 3, 1)'>
+                    On</button>
+                <button type="button" class="nodefunction"
+                        id="cmdSetPin3Low" onclick='setRelay("Off", "cmdSetPin3Low", "cmdRelay3State", 3, 3, 0)'>
+                    Off</button>
+                <div class="relayname">Others</div>
+                <button type="button" class="nodefunction"
+                        id="cmdGetTempBME" onclick='getTempBME("BME temp", "cmdGetTempBME")'>
+                    Temp BME</button>
+                <br>
+                <button type="button" class="nodefunction"
+                        id="cmdGetPress" onclick='getPressure("Pressure", "cmdGetPress")'>
+                    Pressure</button>
+                <br>
+                <button type="button" class="nodefunction"
+                        id="cmdGetBrightness" onclick='getBrightness("Brightness", "cmdGetBrightness")'>
+                    Brightness</button>
+            </div>
         </div>
     </div>
 

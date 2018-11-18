@@ -35,7 +35,7 @@ body {
 }
 
 .nodearea {
-    display: none;
+    /*display: none;*/
     background-color: #10621E;
     border-radius: 15px;
     padding: 10px;

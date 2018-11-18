@@ -75,6 +75,51 @@ function getTempOutside(initialText, objectId) {
             document.getElementById(setTextTo).innerHTML = initialText + " Error " + err;
         });
 }
+function getTempBME(initialText, objectId) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(apiPrefix + "/get/03/31/float",
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                document.getElementById(objectId).innerHTML = initialText + ": " + temp.value + "C";
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(setTextTo).innerHTML = initialText + " Error " + err;
+        });
+}
+function getPressure(initialText, objectId) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(apiPrefix + "/get/03/32/float",
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                document.getElementById(objectId).innerHTML = initialText + ": " + temp.value + " Pa";
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(setTextTo).innerHTML = initialText + " Error " + err;
+        });
+}
+function getBrightness(initialText, objectId) {
+    document.getElementById(objectId).innerHTML = "loading";
+    getRq(apiPrefix + "/get/03/33/float",
+        function (s) {
+            var temp = JSON.parse(s);
+            if (temp.status === "ok") {
+                document.getElementById(objectId).innerHTML = initialText + ": " + temp.value;
+            } else {
+                document.getElementById(objectId).innerHTML = initialText + " Error: " + s;
+            }
+        },
+        function (err, s) {
+            document.getElementById(setTextTo).innerHTML = initialText + " Error " + err;
+        });
+}
 
 function setRelay(initialText, objectId, statusObjectId, node, pin, value) {
     document.getElementById(objectId).innerHTML = "loading";
