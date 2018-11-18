@@ -85,7 +85,7 @@
                 <button type="button" class="nodefunction"
                         id="cmdSetPin3Low" onclick='setRelay("Off", "cmdSetPin3Low", "cmdRelay3State", 3, 3, 0)'>
                     Off</button>
-                <div class="relayname">Others</div>
+                <div class="internaltitle">Others</div>
                 <button type="button" class="nodefunction"
                         id="cmdGetTempBME" onclick='getTempBME("BME temp", "cmdGetTempBME")'>
                     Temp BME</button>
@@ -106,6 +106,7 @@
             Node 4: Weather Station
         </div>
         <div class="nodefunctions" id="node4functions">
+            <div class="internaltitle">Weather</div>
             <button type="button" class="nodefunction"
                     id="cmdGetTempInside" onclick='getTempInside("Inside", "cmdGetTempInside")'>
                 Temp inside</button>
@@ -113,6 +114,30 @@
             <button type="button" class="nodefunction"
                     id="cmdGetTempOutside" onclick='getTempOutside("Outside", "cmdGetTempOutside")'>
                 Temp outside</button>
+            <br>
+            <div class="internaltitle">Lights</div>
+            <input type="range" id="rngLedBrightness" name="Led Brightness"
+                   min="0" max="255" value="0" oninput="brightnessSliderChanged(this.value)" onchange="brightnessSliderChanged(this.value)">
+            <button type="button" class="nodefunction"
+                    id="cmdSliderApply" onclick='sliderApplyPressed()'>
+                Apply</button>
+            <br>
+            <button type="button" class="nodefunction"
+                    id="cmdSliderSet0" onclick='sliderSet(0)'>
+                0%</button>
+            <button type="button" class="nodefunction"
+                    id="cmdSliderSet25" onclick='sliderSet(25)'>
+                25%</button>
+            <button type="button" class="nodefunction"
+                    id="cmdSliderSet50" onclick='sliderSet(50)'>
+                50%</button>
+            <button type="button" class="nodefunction"
+                    id="cmdSliderSet75" onclick='sliderSet(75)'>
+                75%</button>
+            <button type="button" class="nodefunction"
+                    id="cmdSliderSet100" onclick='sliderSet(100)'>
+                100%</button>
+            <br>
         </div>
     </div>
 

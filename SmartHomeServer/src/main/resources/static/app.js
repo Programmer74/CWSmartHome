@@ -299,3 +299,16 @@ function showOrHideElement(elementId) {
         }
     }
 }
+var sliderValue = 0;
+function brightnessSliderChanged(value) {
+    console.log(value);
+    sliderValue = value;
+}
+function sliderApplyPressed() {
+    analogWrite("Apply", "cmdSliderApply", 4, 6, sliderValue);
+}
+function sliderSet(value) {
+    sliderValue = Math.floor(value * 255.0 / 100);
+    document.getElementById("rngLedBrightness").value = sliderValue;
+    sliderApplyPressed();
+}
