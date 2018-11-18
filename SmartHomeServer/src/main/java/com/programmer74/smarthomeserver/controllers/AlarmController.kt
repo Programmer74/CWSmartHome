@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.io.IOException
+import java.util.*
 import javax.annotation.PostConstruct
 
 @RestController
@@ -34,6 +35,15 @@ class AlarmController (private val messagesGateway: MessagesGateway,
   fun currentStatus(): ByteReply {
     try {
       val msg = messagesGateway.get(alarmWatcher.nodeID, 1, ByteArray(0))
+
+      if (msg.bytePayload.toInt() == 1) {
+        if (alarmWatcher.lastAlarmTimestamp != msg.timestamp) {
+          alarmWatcher.totalAlarms++
+          println("ALARMCONTROLLER: Got alarm at ${Date()}")
+        }
+        alarmWatcher.lastAlarmTimestamp = msg.timestamp
+      }
+
       return ByteReply("ok", msg.bytePayload)
     } catch (ex: IOException) {
       ex.printStackTrace()
