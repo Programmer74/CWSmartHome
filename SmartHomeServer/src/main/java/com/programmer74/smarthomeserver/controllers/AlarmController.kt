@@ -17,7 +17,7 @@ class AlarmController (private val messagesGateway: MessagesGateway,
                        private val alarmWatcher: AlarmWatcher) {
 
   @PostConstruct
-  fun wtf() {
+  fun alarmWatcherPostConstruct() {
     alarmWatcher.enableAlarmWatcher()
   }
 
