@@ -1,8 +1,6 @@
 #include <SPI.h>
 #include <RF24Network.h>
 #include <Wire.h>
-//#include <Adafruit_Sensor.h>
-//#include <Adafruit_BMP280.h>
 #include "RF24.h"
 #include "printf.h"
 #include <OneWire.h>
@@ -38,8 +36,6 @@ const uint16_t this_node = 04;        // Address of our node in Octal format
 
 #define MAX_REWRITE_ATTEMPTS 3
 
-#undef BMP280_ADDRESS 
-#define BMP280_ADDRESS  0x76
 
 typedef struct {
     uint8_t message_type;
@@ -129,6 +125,7 @@ float get_ds_temp(byte* addr) {
 float temp_inside = 0;
 float temp_outside = 0;
 bool setup_ds_done = false;
+long temp_counter = 0;
 
 void setup(void)
 {
@@ -147,19 +144,6 @@ void setup(void)
  
   network.begin(/*channel*/ 90, /*node address*/ this_node);
   delay(2000);
-
-//  if (!bmp.begin()) {  
-//    Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
-//    while (1);
-//  }
-
-  Serial.print(F("Temperature = "));
-//  Serial.print(bmp.readTemperature());
-  Serial.println(" *C");
-  
-  Serial.print(F("Pressure = "));
-//  Serial.print(bmp.readPressure());
-  Serial.println(" Pa");
 }
 
 void floatToBytes(float y, uint8_t* bytes) {
@@ -208,9 +192,11 @@ void loop() {
         out_msg.reg_id = in_msg.reg_id;
         if (in_msg.reg_id == REG_DIGITAL_WRITE) {
           Serial.print("Digital write "); Serial.print(in_msg.payload[0]); Serial.print(" to "); Serial.println(in_msg.payload[1]);
+          pinMode(in_msg.payload[0], OUTPUT);
           digitalWrite(in_msg.payload[0], in_msg.payload[1]);
         } else if (in_msg.reg_id == REG_ANALOG_WRITE) {
           Serial.print("Analog write "); Serial.print(in_msg.payload[0]); Serial.print(" to "); Serial.println(in_msg.payload[1]);
+          pinMode(in_msg.payload[0], OUTPUT);
           analogWrite(in_msg.payload[0], in_msg.payload[1]);
         } else {
           Serial.println("Unknown reg");
@@ -255,5 +241,7 @@ void loop() {
     Serial.println("Temp updated.");
     Serial.println(temp_inside);
     Serial.println(temp_outside);
+    temp_counter++;
+    Serial.println(temp_counter);
   }
 }
