@@ -21,14 +21,15 @@
             Third-party ESP8266 WiFi Lamp
         </div>
         <div class="nodefunctions" id="nodeAfunctions">
-            <div class="internaltitle">Lights</div>
+            <div class="internaltitle">Lamps</div>
             <button type="button" class="nodefunction"
-                    id="cmdEspRelay1Toggle" onclick='espToggleRelay(1, "Lamp 1: ", "cmdEspRelay1Toggle")'>
+                    id="cmdEspRelay1Toggle" onclick='espToggleRelay(0, "Lamp 1: ", "cmdEspRelay1Toggle")'>
                 Lamp 1: ?</button>
             <button type="button" class="nodefunction"
                     id="cmdEspRelay2Toggle" onclick='espToggleRelay(1, "Lamp 2: ", "cmdEspRelay2Toggle")'>
                 Lamp 2: ?</button>
-            <input type="range" id="rngLedBrightness" name="Led Brightness"
+            <div class="internaltitle">Workbench LEDs</div>
+            <input type="range" id="rngEspLedBrightness" name="Led Brightness"
                    min="0" max="1023" value="0" oninput="espSliderChanged(this.value)"
                    onchange="espSliderChanged(this.value)">
             <button type="button" class="nodefunction"

@@ -309,7 +309,7 @@ function node4SliderApplyPressed() {
 }
 function node4SliderSet(value) {
     node4SliderValue = Math.floor(value * 255.0 / 100);
-    document.getElementById("rngLedBrightness").value = node4SliderValue;
+    document.getElementById("rngNode4LedBrightness").value = node4SliderValue;
     node4SliderApplyPressed();
 }
 
@@ -323,7 +323,7 @@ function espSliderApplyPressed() {
 }
 function espSliderSet(value) {
     espSliderValue = Math.floor(value * 1023.0 / 100);
-    document.getElementById("rngLedBrightness").value = espSliderValue;
+    document.getElementById("rngEspLedBrightness").value = espSliderValue;
     espSliderApplyPressed();
 }
 function espToggleRelay(id, initialText, objectId) {
