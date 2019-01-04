@@ -299,16 +299,51 @@ function showOrHideElement(elementId) {
         }
     }
 }
-var sliderValue = 0;
-function brightnessSliderChanged(value) {
+var node4SliderValue = 0;
+function node4BrightnessSliderChanged(value) {
     console.log(value);
-    sliderValue = value;
+    node4SliderValue = value;
 }
-function sliderApplyPressed() {
-    analogWrite("Apply", "cmdSliderApply", 4, 6, sliderValue);
+function node4SliderApplyPressed() {
+    analogWrite("Apply", "cmdSliderApply", 4, 6, node4SliderValue);
 }
-function sliderSet(value) {
-    sliderValue = Math.floor(value * 255.0 / 100);
-    document.getElementById("rngLedBrightness").value = sliderValue;
-    sliderApplyPressed();
+function node4SliderSet(value) {
+    node4SliderValue = Math.floor(value * 255.0 / 100);
+    document.getElementById("rngLedBrightness").value = node4SliderValue;
+    node4SliderApplyPressed();
+}
+
+var espSliderValue = 0;
+function espSliderChanged(value) {
+    console.log(value);
+    espSliderValue = value;
+}
+function espSliderApplyPressed() {
+    getRq("http://192.168.0.102/led?val=" + (1023 - espSliderValue), {}, {});
+}
+function espSliderSet(value) {
+    espSliderValue = Math.floor(value * 1023.0 / 100);
+    document.getElementById("rngLedBrightness").value = espSliderValue;
+    espSliderApplyPressed();
+}
+function espToggleRelay(id, initialText, objectId) {
+    if (document.getElementById(objectId) != null) {
+        document.getElementById(objectId).innerHTML = "loading";
+    }
+    getRq("http://192.168.0.102/relay?index=" + id + "&val=2",
+        function (s) {
+            if (document.getElementById(objectId) != null) {
+                document.getElementById(objectId).innerHTML = initialText + s;
+                if (s === "Off") {
+                    document.getElementById(objectId).style.background = "#5b5449";
+                } else {
+                    document.getElementById(objectId).style.background = "#f2cf9a";
+                }
+            }
+        },
+        function (err, s) {
+            if (document.getElementById(objectId) != null) {
+                document.getElementById(objectId).innerHTML = initialText + " Error " + err;
+            }
+        });
 }

@@ -34,13 +34,15 @@ body {
     margin: 5px;
 }
 
-.nodearea {
-    display: none;
+.thirdpartynodearea, .nodearea {
     background-color: #10621E;
     border-radius: 15px;
     padding: 10px;
     margin: 5px;
     color: white;
+}
+.nodearea {
+    display: none;
 }
 .nodefunctions {
     background-color: #2B823A;
