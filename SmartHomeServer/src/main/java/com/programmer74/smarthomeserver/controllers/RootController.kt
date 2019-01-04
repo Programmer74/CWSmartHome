@@ -43,9 +43,17 @@ class RootController (private val messagesGateway: MessagesGateway){
       return FloatReply("ok", msg.floatPayload)
     } catch (ex: IOException) {
       ex.printStackTrace()
-      return FloatReply("Error: " + ex.message, 0f)
+      return FloatReply("Error: " + ex.message, -999999.0f)
     }
 
+  }
+
+  @GetMapping("get/{node}/{reg}/float/string")
+  fun getRegisterFloatString(
+      @NotNull @PathVariable("node") nodeID: Int?,
+      @NotNull @PathVariable("reg") reg: Int?
+  ): String {
+    return String.format("%.2f", getRegisterFloat(nodeID, reg).value)
   }
 
   @GetMapping("get/{node}/{reg}/byte")
